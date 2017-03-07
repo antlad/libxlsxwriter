@@ -229,6 +229,7 @@ typedef struct lxw_chart_title {
     lxw_row_t row;
     lxw_col_t col;
     lxw_chart_font font;
+    int32_t angle;
     uint8_t off;
     uint8_t is_horizontal;
     uint8_t ignore_cache;

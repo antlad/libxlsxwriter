@@ -149,6 +149,7 @@ lxw_chart_axis *lxw_axis_new()
 
     axis->min_value = NAN;
     axis->max_value = NAN;
+    axis->title.angle = -90;
     axis->title.range = calloc(1, sizeof(lxw_series_range));
     GOTO_LABEL_ON_MEM_ERROR(axis->title.range, mem_error);
 
@@ -183,6 +184,7 @@ lxw_chart *lxw_chart_new(uint8_t type)
 
     chart->title.range = calloc(1, sizeof(lxw_series_range));
     GOTO_LABEL_ON_MEM_ERROR(chart->title.range, mem_error);
+    chart->title.angle = -90;
 
     /* Initialize the ranges in the chart titles. */
     if (_chart_init_data_cache(chart->title.range) != LXW_NO_ERROR)
@@ -668,7 +670,7 @@ _chart_write_a_body_pr(lxw_chart *self, lxw_chart_title *title)
     LXW_INIT_ATTRIBUTES();
 
     if (title && title->is_horizontal) {
-        LXW_PUSH_ATTRIBUTES_STR("rot", "-5400000");
+        LXW_PUSH_ATTRIBUTES_INT("rot", 60000 * title->angle);
         LXW_PUSH_ATTRIBUTES_STR("vert", "horz");
     }
 
