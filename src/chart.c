@@ -2018,6 +2018,8 @@ _chart_write_cat_axis(lxw_chart *self, val_axis_args* args)
 
     _chart_write_axis_id(self, args->id_1);
 
+    _chart_write_tx_pr(self, &self->x_axis->title);
+
     /* Write the c:scaling element. */
     _chart_write_scaling(self, args->x_axis);
 
