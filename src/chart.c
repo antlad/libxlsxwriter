@@ -98,6 +98,8 @@ void lxw_axis_free(lxw_chart_axis *axis)
         return;
     free(axis->title.name);
     _chart_free_range(axis->title.range);
+    if (axis->major_gridlines_sp_pr)
+        free(axis->major_gridlines_sp_pr);
     free(axis);
 }
 
@@ -1754,9 +1756,18 @@ _chart_write_lbl_offset(lxw_chart *self)
 STATIC void
 _chart_write_major_gridlines(lxw_chart *self, lxw_chart_axis *axis)
 {
-
+    struct xml_attribute_list attributes;
+    struct xml_attribute *attribute;
     if (axis->default_major_gridlines)
         lxw_xml_empty_tag(self->file, "c:majorGridlines", NULL);
+    else if (axis->major_gridlines_sp_pr)
+    {
+        LXW_INIT_ATTRIBUTES();
+        lxw_xml_start_tag(self->file, "c:majorGridlines", &attributes);
+        _chart_write_sp_pr(self, axis->major_gridlines_sp_pr);
+        lxw_xml_end_tag(self->file, "c:majorGridlines");
+        LXW_FREE_ATTRIBUTES();
+    }
 }
 
 /*

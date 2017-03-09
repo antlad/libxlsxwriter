@@ -288,6 +288,8 @@ typedef struct lxw_chart_axis {
     double min_value;
     double max_value;
 
+    lxw_shape_properties* major_gridlines_sp_pr;
+
     uint8_t position;
     uint8_t visible;
 
