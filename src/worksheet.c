@@ -1613,6 +1613,9 @@ _write_row(lxw_worksheet *self, lxw_row *row, char *spans)
     if (row->collapsed)
         LXW_PUSH_ATTRIBUTES_STR("collapsed", "1");
 
+    if (row->level)
+        LXW_PUSH_ATTRIBUTES_INT("outlineLevel", row->level);
+
     if (!row->data_changed)
         lxw_xml_empty_tag(self->file, "row", &attributes);
     else
