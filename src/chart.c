@@ -98,6 +98,8 @@ void lxw_axis_free(lxw_chart_axis *axis)
         return;
     free(axis->title.name);
     _chart_free_range(axis->title.range);
+    if (axis->major_gridlines_sp_pr)
+        free(axis->major_gridlines_sp_pr);
     free(axis);
 }
 
@@ -149,6 +151,7 @@ lxw_chart_axis *lxw_axis_new()
 
     axis->min_value = NAN;
     axis->max_value = NAN;
+    axis->title.angle = -90;
     axis->title.range = calloc(1, sizeof(lxw_series_range));
     GOTO_LABEL_ON_MEM_ERROR(axis->title.range, mem_error);
 
@@ -183,6 +186,7 @@ lxw_chart *lxw_chart_new(uint8_t type)
 
     chart->title.range = calloc(1, sizeof(lxw_series_range));
     GOTO_LABEL_ON_MEM_ERROR(chart->title.range, mem_error);
+    chart->title.angle = -90;
 
     /* Initialize the ranges in the chart titles. */
     if (_chart_init_data_cache(chart->title.range) != LXW_NO_ERROR)
@@ -668,7 +672,7 @@ _chart_write_a_body_pr(lxw_chart *self, lxw_chart_title *title)
     LXW_INIT_ATTRIBUTES();
 
     if (title && title->is_horizontal) {
-        LXW_PUSH_ATTRIBUTES_STR("rot", "-5400000");
+        LXW_PUSH_ATTRIBUTES_INT("rot", 60000 * title->angle);
         LXW_PUSH_ATTRIBUTES_STR("vert", "horz");
     }
 
@@ -1752,9 +1756,18 @@ _chart_write_lbl_offset(lxw_chart *self)
 STATIC void
 _chart_write_major_gridlines(lxw_chart *self, lxw_chart_axis *axis)
 {
-
+    struct xml_attribute_list attributes;
+    struct xml_attribute *attribute;
     if (axis->default_major_gridlines)
         lxw_xml_empty_tag(self->file, "c:majorGridlines", NULL);
+    else if (axis->major_gridlines_sp_pr)
+    {
+        LXW_INIT_ATTRIBUTES();
+        lxw_xml_start_tag(self->file, "c:majorGridlines", &attributes);
+        _chart_write_sp_pr(self, axis->major_gridlines_sp_pr);
+        lxw_xml_end_tag(self->file, "c:majorGridlines");
+        LXW_FREE_ATTRIBUTES();
+    }
 }
 
 /*
@@ -2015,6 +2028,8 @@ _chart_write_cat_axis(lxw_chart *self, val_axis_args* args)
     lxw_xml_start_tag(self->file, "c:catAx", NULL);
 
     _chart_write_axis_id(self, args->id_1);
+
+    _chart_write_tx_pr(self, &self->x_axis->title);
 
     /* Write the c:scaling element. */
     _chart_write_scaling(self, args->x_axis);

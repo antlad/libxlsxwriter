@@ -229,6 +229,7 @@ typedef struct lxw_chart_title {
     lxw_row_t row;
     lxw_col_t col;
     lxw_chart_font font;
+    int32_t angle;
     uint8_t off;
     uint8_t is_horizontal;
     uint8_t ignore_cache;
@@ -286,6 +287,8 @@ typedef struct lxw_chart_axis {
 
     double min_value;
     double max_value;
+
+    lxw_shape_properties* major_gridlines_sp_pr;
 
     uint8_t position;
     uint8_t visible;
